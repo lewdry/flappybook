@@ -4,11 +4,11 @@ const pipeTop = document.querySelector('.pipe.top');
 const pipeBottom = document.querySelector('.pipe.bottom');
 let bookY = container.clientHeight / 2;
 let bookVelocity = 0;
-let gravity = 0.5;
+let gravity = 0.3;
 let jumpForce = -8;
 let isOpen = false;
 let pipeX = container.clientWidth;
-let pipeGap = 400;
+let pipeGap = 450;
 let pipeWidth = 80;
 let score = 0;
 
@@ -59,7 +59,7 @@ function toggleBook() {
 }
 
 function setPipeHeights() {
-  const minHeight = 50;
+  const minHeight = 100;
   const maxHeight = container.clientHeight - pipeGap - minHeight;
   const topHeight = Math.random() * (maxHeight - minHeight) + minHeight;
   pipeTop.style.height = `${topHeight}px`;
