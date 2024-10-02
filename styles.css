@@ -34,11 +34,21 @@ body {
   .pipe {
     position: absolute;
     width: 120px;
-    background-image: url('pillar.png'); /* Set the background image */
-    background-size: contain; /* Adjusts the image to cover the entire pipe */
-    background-repeat: repeat-y; /* Repeat the image vertically */
-    background-position: center; /* Centers the image */
-    right: -120px; /* Start off-screen */
+    background-image: url('pillar.png');
+    background-size: 100% auto; /* Adjust to fit width, auto height */
+    background-repeat: repeat-y;
+    background-position: center;
+    right: -120px;
+  }
+  
+  .pipe.top {
+    background-position: bottom center; /* Align the image to the bottom for top pipe */
+    top: 0;
+  }
+  
+  .pipe.bottom {
+    background-position: top center; /* Align the image to the top for bottom pipe */
+    bottom: 0;
   }
   .pipe.top {
     top: 0;

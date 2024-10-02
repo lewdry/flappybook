@@ -78,12 +78,17 @@ function toggleBook() {
 }
 
 function setPipeHeights() {
-  const minHeight = 100;
-  const maxHeight = container.clientHeight - pipeGap - minHeight;
-  const topHeight = Math.random() * (maxHeight - minHeight) + minHeight;
-  pipeTop.style.height = `${topHeight}px`;
-  pipeBottom.style.height = `${container.clientHeight - topHeight - pipeGap}px`;
-}
+    const minHeight = 100;
+    const maxHeight = container.clientHeight - pipeGap - minHeight;
+    const topHeight = Math.floor((Math.random() * (maxHeight - minHeight) + minHeight) / 120) * 120;
+    pipeTop.style.height = `${topHeight}px`;
+    pipeBottom.style.height = `${container.clientHeight - topHeight - pipeGap}px`;
+    
+    // Adjust background position for bottom pipe
+    const bottomPipeHeight = container.clientHeight - topHeight - pipeGap;
+    const bottomPipeBackgroundPosition = `0px -${120 - (bottomPipeHeight % 120)}px`;
+    pipeBottom.style.backgroundPosition = bottomPipeBackgroundPosition;
+  }
 
 function gameOver() {
     isGameRunning = false;
