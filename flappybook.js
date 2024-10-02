@@ -16,6 +16,11 @@ let score = 0;
 let isGameRunning = false;
 let isGameOver = false;
 
+function setViewportHeight() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
 function update() {
     if (!isGameRunning) return;
 
@@ -73,7 +78,7 @@ function toggleBook() {
 }
 
 function setPipeHeights() {
-  const minHeight = 100;
+  const minHeight = 50;
   const maxHeight = container.clientHeight - pipeGap - minHeight;
   const topHeight = Math.random() * (maxHeight - minHeight) + minHeight;
   pipeTop.style.height = `${topHeight}px`;
@@ -128,6 +133,7 @@ function startGame() {
     isGameOver = false;
     hideStartMessage();
     hideGameOverMessage();
+    setViewportHeight(); // Set correct height before starting the game
     requestAnimationFrame(update);
 }
 
@@ -137,6 +143,12 @@ container.addEventListener('touchstart', (e) => {
     e.preventDefault();
     jump();
 });
+
+// Set the height on page load
+setViewportHeight();
+
+// Update the height on window resize
+window.addEventListener('resize', setViewportHeight);
 
 // Initial setup
 setPipeHeights();
