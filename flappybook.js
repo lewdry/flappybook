@@ -78,7 +78,7 @@ function toggleBook() {
 }
 
 function setPipeHeights() {
-  const minHeight = 50;
+  const minHeight = 100;
   const maxHeight = container.clientHeight - pipeGap - minHeight;
   const topHeight = Math.random() * (maxHeight - minHeight) + minHeight;
   pipeTop.style.height = `${topHeight}px`;
