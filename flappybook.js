@@ -2,6 +2,8 @@ const book = document.querySelector('.book');
 const container = document.querySelector('.container');
 const pipeTop = document.querySelector('.pipe.top');
 const pipeBottom = document.querySelector('.pipe.bottom');
+const startMessage = document.querySelector('.start-message');
+const gameOverMessage = document.querySelector('.game-over-message');
 let bookY = container.clientHeight / 2;
 let bookVelocity = 0;
 let gravity = 0.3;
@@ -11,51 +13,63 @@ let pipeX = container.clientWidth;
 let pipeGap = 450;
 let pipeWidth = 80;
 let score = 0;
+let isGameRunning = false;
+let isGameOver = false;
 
 function update() {
-  // Update book position
-  bookY += bookVelocity;
-  bookVelocity += gravity;
-  book.style.top = `${bookY}px`;
+    if (!isGameRunning) return;
 
-  // Update pipe position
-  pipeX -= 6;
-  if (pipeX < -pipeWidth) {
-    pipeX = container.clientWidth;
-    setPipeHeights();
-    score++;
-  }
-  pipeTop.style.right = pipeBottom.style.right = `${container.clientWidth - pipeX}px`;
+    // Update book position
+    bookY += bookVelocity;
+    bookVelocity += gravity;
+    book.style.top = `${bookY}px`;
 
-  // Check for collisions
-  if (checkCollision()) {
-    gameOver();
-    return;
-  }
+    // Update pipe position
+    pipeX -= 6;
+    if (pipeX < -pipeWidth) {
+        pipeX = container.clientWidth;
+        setPipeHeights();
+        score++;
+    }
+    pipeTop.style.right = pipeBottom.style.right = `${container.clientWidth - pipeX}px`;
 
-  requestAnimationFrame(update);
+    // Check for collisions
+    if (checkCollision()) {
+        gameOver();
+        return;
+    }
+
+    requestAnimationFrame(update);
 }
 
 function checkCollision() {
-  const bookRect = book.getBoundingClientRect();
-  const topPipeRect = pipeTop.getBoundingClientRect();
-  const bottomPipeRect = pipeBottom.getBoundingClientRect();
+    const bookRect = book.getBoundingClientRect();
+    const topPipeRect = pipeTop.getBoundingClientRect();
+    const bottomPipeRect = pipeBottom.getBoundingClientRect();
 
-  return (
-    bookRect.right > topPipeRect.left &&
-    bookRect.left < topPipeRect.right &&
-    (bookRect.top < topPipeRect.bottom || bookRect.bottom > bottomPipeRect.top)
-  ) || bookY < 0 || bookY > container.clientHeight - book.clientHeight;
+    return (
+        bookRect.right > topPipeRect.left &&
+        bookRect.left < topPipeRect.right &&
+        (bookRect.top < topPipeRect.bottom || bookRect.bottom > bottomPipeRect.top)
+    ) || bookY < 0 || bookY > container.clientHeight - book.clientHeight;
 }
 
 function jump() {
-  bookVelocity = jumpForce;
-  toggleBook();
+    if (isGameOver) {
+        resetGame();
+        return;
+    }
+    if (!isGameRunning) {
+        startGame();
+        return;
+    }
+    bookVelocity = jumpForce;
+    toggleBook();
 }
 
 function toggleBook() {
-  isOpen = !isOpen;
-  book.textContent = isOpen ? '📖' : '📘';
+    isOpen = !isOpen;
+    book.textContent = isOpen ? '📖' : '📘';
 }
 
 function setPipeHeights() {
@@ -67,28 +81,63 @@ function setPipeHeights() {
 }
 
 function gameOver() {
-  alert(`Game Over! Your score: ${score}`);
-  resetGame();
+    isGameRunning = false;
+    isGameOver = true;
+    showGameOverMessage();
 }
 
 function resetGame() {
-  bookY = container.clientHeight / 2;
-  bookVelocity = 0;
-  book.style.top = `${bookY}px`;
-  book.textContent = '📘';
-  isOpen = false;
-  pipeX = container.clientWidth;
-  score = 0;
-  setPipeHeights();
-  requestAnimationFrame(update);
+    bookY = container.clientHeight / 2;
+    bookVelocity = 0;
+    book.style.top = `${bookY}px`;
+    book.textContent = '📘';
+    isOpen = false;
+    score = 0;
+    resetPipePosition();
+    setPipeHeights();
+    hideGameOverMessage();
+    showStartMessage();
+    isGameOver = false;
+}
+
+function resetPipePosition() {
+    pipeX = container.clientWidth;
+    pipeTop.style.right = pipeBottom.style.right = '0px';
+}
+
+function showStartMessage() {
+    startMessage.style.display = 'block';
+    gameOverMessage.style.display = 'none';
+}
+
+function hideStartMessage() {
+    startMessage.style.display = 'none';
+}
+
+function showGameOverMessage() {
+    gameOverMessage.innerHTML = `Game over!<br>Your score: ${score}<br>Tap to play again`;
+    gameOverMessage.style.display = 'block';
+}
+
+function hideGameOverMessage() {
+    gameOverMessage.style.display = 'none';
+}
+
+function startGame() {
+    isGameRunning = true;
+    isGameOver = false;
+    hideStartMessage();
+    hideGameOverMessage();
+    requestAnimationFrame(update);
 }
 
 // Event listeners for touch and click
 container.addEventListener('click', jump);
 container.addEventListener('touchstart', (e) => {
-  e.preventDefault();
-  jump();
+    e.preventDefault();
+    jump();
 });
 
+// Initial setup
 setPipeHeights();
-update();
+resetGame();
